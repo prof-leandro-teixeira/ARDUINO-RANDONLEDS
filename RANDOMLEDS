@@ -1,0 +1,40 @@
+/* 
+Explicação do experimento - Experimento consiste em acionar leds de forma aleatória 
+e ao pressionar um botão, chamar uma função que irá diminuir o delay
+
+Informações para circuito físico - Nesse experimento utilizei a porta digital 2 para o botão
+usei uma porta A0 como digital para o primeiro led
+*/
+const int leds[] = {3,4,5,6,7,8,9,10,11,12,13,14};  //array para utilizar 12 leds
+const int interruptPin = 2;                         //botão na porta 2 para utilizar a função attachInterrupt para mudar de função quando o botão é acionado
+int period = 500;                                   //variavel utilizada para delay
+
+void setup() 
+{
+  for (int i=0; i < 13; i++)                        //contador para acionar os leds na função pinMode
+  {
+  pinMode(leds[i], OUTPUT);
+  pinMode(interruptPin, INPUT_PULLUP);
+  Serial.begin(9600);                               //Configura a taxa de transferência em bits por segundo (baud rate) para transmissão serial
+  }
+}
+
+void loop() 
+{
+  int led = random(3, 15);                    //seleciona aleatoriamente as portas de 3 a 14 para executar as funções abaixo
+  digitalWrite(led, HIGH);                    //liga o led que foi selecionado aleatóriamente
+  delay(period);                              //usa o delay definido na variavel period no início do sketch
+  digitalWrite(led, LOW);                     //desliga o led que foi selecionado aleatóriamente
+  Serial.println(digitalRead(interruptPin));  //imprime no serial monitor o valor do botão 1 ou 0
+  attachInterrupt(0, goFast, FALLING);        //ativa uma interrupção no processo
+
+  if (digitalRead(2) == 0)                    //se a leitura do botão for 0 o delay vai para 500;
+  {
+    period = 500;
+  }
+}
+
+void goFast()                                 //função para ser utilizada no loop na chamada do attachInterrupt
+{
+  period = 100;
+}
